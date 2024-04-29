@@ -50,7 +50,7 @@ sip==6.8.3
 smmap==5.0.1
 streamlit==1.33.0
 tabulate==0.8.9
-TBB==0.2
+TBB==2021.12.0
 tenacity==8.2.3
 typing_extensions==4.11.0
 webencodings==0.5.1
