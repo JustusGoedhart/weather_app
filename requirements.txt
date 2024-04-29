@@ -36,7 +36,7 @@ pep8==1.7.1
 pillow==10.3.0
 protobuf==4.25.3
 pyarrow==16.0.0
-pyasn1-modules==0.2.8
+pyasn1-modules==0.6.6
 pycosat==0.6.3s
 pycurl==7.45.3
 pydeck==0.8.1b0
