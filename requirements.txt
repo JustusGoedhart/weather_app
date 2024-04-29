@@ -10,7 +10,7 @@ certifi==2021.10.8
 clyent==1.2.1
 constantly==15.1.0
 cssselect==1.1.0
-cytoolz==0.11.0
+cytoolz
 daal4py
 datashape==0.5.2
 et-xmlfile==1.1.0
