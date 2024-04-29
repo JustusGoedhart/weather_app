@@ -54,5 +54,5 @@ TBB==2021.12.0
 tenacity==8.2.3
 typing_extensions==4.11.0
 webencodings==0.5.1
-xlwings==0.24.9
+#xlwings==0.24.9
 zict==2.0.0
