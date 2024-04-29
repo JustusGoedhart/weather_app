@@ -6,6 +6,7 @@ bkcharts==0.2
 black==19.10b0
 blinker==1.7.0
 brotlipy==0.7.0
+bcrypt
 certifi==2021.10.8
 clyent==1.2.1
 constantly==15.1.0
