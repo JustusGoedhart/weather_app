@@ -11,40 +11,31 @@ import pytz
 
 # Function to hash passwords using bcrypt
 def hash_password(password):
+    # Generate a salt and return a hashed password
     salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(password.encode(), salt)
-    return hashed_password
-
-# Load sensitive data from Streamlit Secrets
-user1_username = st.secrets["USER1_USERNAME"]
-user1_password = st.secrets["USER1_PASSWORD"]
-user2_username = st.secrets["USER2_USERNAME"]
-user2_password = st.secrets["USER2_PASSWORD"]
+    return bcrypt.hashpw(password.encode(), salt)
 
 # Dummy database of users with hashed passwords
-users = {}
-if user1_username and user1_password:
-    users[user1_username] = hash_password(user1_password)
-if user2_username and user2_password:
-    users[user2_username] = hash_password(user2_password)
+users = {
+    "user1": hash_password("Xylophone!78"),
+    "user2": hash_password("Sunflower$42")
+}
+
+# API authentication details
+api_username = 'student_goedhart_justus'
+api_password = 'Mp3JEcg75R'
 
 # Function to logout user
 def logout():
     st.session_state['username'] = None
-    st.rerun()
-
-# Function to authenticate user
-def authenticate(username, password):
-    if username in users and bcrypt.checkpw(password.encode(), users[username]):
-        return True
-    return False
+    st.experimental_rerun()
 
 # Function to login user
 def login(username, password):
-    if authenticate(username, password):
-        st.session_state['username'] = username  # Set the session state here
-        return username
-    return None
+    if username in users and bcrypt.checkpw(password.encode(), users[username]):
+        st.session_state['username'] = username
+        st.experimental_rerun()  # Rerun the app to update the login state
+
 
 # Function to display login form
 def login_form():
@@ -55,11 +46,8 @@ def login_form():
         if submitted:
             if login(username, password):
                 st.success("Logged in successfully!")
-                st.rerun()
-                return True
             else:
                 st.error("Username or password is incorrect")
-                return False
 
 # Initialize session state for username
 if 'username' not in st.session_state:
