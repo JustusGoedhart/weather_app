@@ -25,19 +25,8 @@ def logout():
 def authenticate(username, password, secrets):
     # Extract the hashed password based on the username
     if username in secrets:
-        hashed_password = secrets[username]
-        # Convert the stored hash from string to bytes for bcrypt
-        stored_hash = hashed_password.encode().decode('unicode_escape').encode('raw_unicode_escape')
-        return bcrypt.checkpw(password.encode(), stored_hash)
-    else:
-        return False
-
-# Function to authenticate user
-def authenticate_user(username, password):
-    if username == user1_username:
-        return authenticate(username, password, user1_password_hash)
-    elif username == user2_username:
-        return authenticate(username, password, user2_password_hash)
+        stored_hash = secrets[username]
+        return bcrypt.checkpw(password.encode(), stored_hash.encode())
     else:
         return False
 
