@@ -13,22 +13,27 @@ import uuid
 
 # Load sensitive data from Streamlit Secrets
 user1_username = st.secrets["USER1_USERNAME"]
-user1_password_hash = st.secrets["USER1_PASSWORD_HASHED"]
 user2_username = st.secrets["USER2_USERNAME"]
-user2_password_hash = st.secrets["USER2_PASSWORD_HASHED"]
 
 # Function to logout user
 def logout():
     st.session_state['username'] = None
     st.rerun()
 
-def authenticate(username, password, secrets):
-    # Extract the hashed password based on the username
-    if username in secrets:
-        stored_hash = secrets[username]
-        return bcrypt.checkpw(password.encode(), stored_hash.encode())
+# Function to authenticate user
+def authenticate(username, password):
+    # Check against user 1
+    if username == user1_username:
+        stored_hash = st.secrets["USER1_PASSWORD_HASHED"]
+    # Check against user 2
+    elif username == user2_username:
+        stored_hash = st.secrets["USER2_PASSWORD_HASHED"]
     else:
         return False
+
+    # Convert the stored hash from string to bytes for bcrypt
+    stored_hash = stored_hash.encode().decode('unicode_escape').encode('raw_unicode_escape')
+    return bcrypt.checkpw(password.encode(), stored_hash)
 
 # Function to login user
 def login(username, password):
@@ -36,17 +41,15 @@ def login(username, password):
         st.session_state['username'] = username  # Set the session state here
         return username
     return None
-
+# Function to display login form
 def login_form():
-    form_key = f"login_form_{uuid.uuid4()}"
-    with st.form(form_key):
-        username = st.text_input("Username", key=f"username_{form_key}")
-        password = st.text_input("Password", type="password", key=f"password_{form_key}")
+    with st.form("login_form"):
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
         submitted = st.form_submit_button("Login")
         if submitted:
             if login(username, password):
                 st.success("Logged in successfully!")
-                st.session_state['username'] = username
                 st.rerun()
                 return True
             else:
@@ -216,18 +219,10 @@ def main_page():
         </div>
         """, unsafe_allow_html=True)
 
-        #st.write(f"Current Temperature: {current_temperature:.1f} °C")
-        #st.write(f"Current Cloud Cover: {current_condition}")
-        #st.write(f"Local Time: {current_time.strftime('%-I%p').lower()}")
-        #st.write(f"High of the Day: {high_temp:.1f} °C")
-        #st.write(f"Low of the Day: {low_temp:.1f} °C")
-
         # Display the hourly weather overview table
         st.subheader("Hourly Weather Overview:")
         table_data = table_data.fillna("Nighttime")
         st.table(table_data.T) # T to transpose the table
-
-
 
         # Display the radio button group for selecting chart type
         chart_type = st.radio("Select chart type:", ["Temperature (°C)", "Precipitation (mm)"])
