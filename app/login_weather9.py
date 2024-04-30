@@ -41,13 +41,12 @@ def login(username, password):
         return username
     return None
 
-# Function to display login form
 def login_form():
     form_key = f"login_form_{int(time.time())}"  # Unique key using a timestamp
     with st.form(form_key):
         username = st.text_input("Username", key=f"username_{form_key}")
         password = st.text_input("Password", type="password", key=f"password_{form_key}")
-        submitted = st.form_submit_button("Login", key=f"submit_{form_key}")
+        submitted = st.form_submit_button("Login")  # No key argument needed here
         if submitted:
             if login(username, password):
                 st.success("Logged in successfully!")
