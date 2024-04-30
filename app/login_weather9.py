@@ -21,10 +21,6 @@ users = {
     "user2": hash_password("Sunflower$42")
 }
 
-# API authentication details
-api_username = 'student_goedhart_justus'
-api_password = 'Mp3JEcg75R'
-
 # Function to logout user
 def logout():
     st.session_state['username'] = None
@@ -67,8 +63,8 @@ cities = {
 }
 
 # API authentication details
-api_username = st.secrets["API_USERNAME"]
-api_password = st.secrets["API_PASSWORD"]
+api_username = 'student_goedhart_justus'
+api_password = 'Mp3JEcg75R'
 
 # Function to fetch weather data
 def fetch_weather_data(city):
