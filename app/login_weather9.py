@@ -8,7 +8,6 @@ from io import StringIO
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import pytz
-import time
 import uuid
 
 # Load sensitive data from Streamlit Secrets
@@ -41,9 +40,11 @@ def login(username, password):
         st.session_state['username'] = username  # Set the session state here
         return username
     return None
+
 # Function to display login form
 def login_form():
-    with st.form("login_form"):
+    form_key = f"login_form_{uuid.uuid4().hex}"  # Generate a unique key for the form
+    with st.form(form_key):
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
         submitted = st.form_submit_button("Login")
