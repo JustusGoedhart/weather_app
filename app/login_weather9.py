@@ -9,30 +9,37 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import pytz
 import time
+import uuid
 
 # Load sensitive data from Streamlit Secrets
 user1_username = st.secrets["USER1_USERNAME"]
+user1_password_hash = st.secrets["USER1_PASSWORD_HASHED"]
 user2_username = st.secrets["USER2_USERNAME"]
+user2_password_hash = st.secrets["USER2_PASSWORD_HASHED"]
 
 # Function to logout user
 def logout():
     st.session_state['username'] = None
     st.rerun()
 
-# Function to authenticate user
-def authenticate(username, password):
-    # Check against user 1
-    if username == user1_username:
-        stored_hash = st.secrets["USER1_PASSWORD_HASHED"]
-    # Check against user 2
-    elif username == user2_username:
-        stored_hash = st.secrets["USER2_PASSWORD_HASHED"]
+def authenticate(username, password, secrets):
+    # Extract the hashed password based on the username
+    if username in secrets:
+        hashed_password = secrets[username]
+        # Convert the stored hash from string to bytes for bcrypt
+        stored_hash = hashed_password.encode().decode('unicode_escape').encode('raw_unicode_escape')
+        return bcrypt.checkpw(password.encode(), stored_hash)
     else:
         return False
 
-    # Convert the stored hash from string to bytes for bcrypt
-    stored_hash = stored_hash.encode().decode('unicode_escape').encode('raw_unicode_escape')
-    return bcrypt.checkpw(password.encode(), stored_hash)
+# Function to authenticate user
+def authenticate_user(username, password):
+    if username == user1_username:
+        return authenticate(username, password, user1_password_hash)
+    elif username == user2_username:
+        return authenticate(username, password, user2_password_hash)
+    else:
+        return False
 
 # Function to login user
 def login(username, password):
@@ -42,11 +49,11 @@ def login(username, password):
     return None
 
 def login_form():
-    form_key = f"login_form_{int(time.time())}"  # Unique key using a timestamp
+    form_key = f"login_form_{uuid.uuid4()}"
     with st.form(form_key):
         username = st.text_input("Username", key=f"username_{form_key}")
         password = st.text_input("Password", type="password", key=f"password_{form_key}")
-        submitted = st.form_submit_button("Login")  # No key argument needed here
+        submitted = st.form_submit_button("Login")
         if submitted:
             if login(username, password):
                 st.success("Logged in successfully!")
