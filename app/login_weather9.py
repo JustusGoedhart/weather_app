@@ -8,6 +8,7 @@ from io import StringIO
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import pytz
+import time
 
 # Load sensitive data from Streamlit Secrets
 user1_username = st.secrets["USER1_USERNAME"]
@@ -42,13 +43,15 @@ def login(username, password):
 
 # Function to display login form
 def login_form():
-    with st.form("login_form"):
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        submitted = st.form_submit_button("Login")
+    form_key = f"login_form_{int(time.time())}"  # Unique key using a timestamp
+    with st.form(form_key):
+        username = st.text_input("Username", key=f"username_{form_key}")
+        password = st.text_input("Password", type="password", key=f"password_{form_key}")
+        submitted = st.form_submit_button("Login", key=f"submit_{form_key}")
         if submitted:
             if login(username, password):
                 st.success("Logged in successfully!")
+                st.session_state['username'] = username
                 st.rerun()
                 return True
             else:
