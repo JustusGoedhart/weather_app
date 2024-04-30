@@ -10,8 +10,6 @@ from datetime import datetime, timedelta
 import pytz
 import os
 from dotenv import load_dotenv
-import schedule
-import time
 
 # Function to hash passwords using bcrypt
 def hash_password(password):
@@ -19,16 +17,14 @@ def hash_password(password):
     hashed_password = bcrypt.hashpw(password.encode(), salt)
     return hashed_password
 
+# Load environment variables
 load_dotenv()
 
-# Load secrets from streamlit.toml
-st.secrets.load_config_file()
-
 # Load sensitive data from Streamlit Secrets
-user1_username = st.secrets["USER1_USERNAME"]
-user1_password = st.secrets["USER1_PASSWORD"]
-user2_username = st.secrets["USER2_USERNAME"]
-user2_password = st.secrets["USER2_PASSWORD"]
+user1_username = os.getenv("USER1_USERNAME")
+user1_password = os.getenv("USER1_PASSWORD")
+user2_username = os.getenv("USER2_USERNAME")
+user2_password = os.getenv("USER2_PASSWORD")
 
 # Dummy database of users with hashed passwords
 users = {}
@@ -88,8 +84,8 @@ cities = {
 }
 
 # API authentication details
-api_username = st.secrets["API_USERNAME"]
-api_password = st.secrets["API_PASSWORD"]
+api_username = os.getenv("API_USERNAME")
+api_password = os.getenv("API_PASSWORD")
 
 # Function to fetch weather data
 def fetch_weather_data(city):
