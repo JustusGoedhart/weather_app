@@ -38,8 +38,8 @@ def authenticate(username, password):
 def login(username, password):
     if authenticate(username, password):
         st.session_state['username'] = username  # Set the session state here
-        return username
-    return None
+        return True
+    return False
 
 # Function to display login form
 def login_form():
@@ -51,7 +51,6 @@ def login_form():
         if submitted:
             if login(username, password):
                 st.success("Logged in successfully!")
-                st.rerun()
                 return True
             else:
                 st.error("Username or password is incorrect")
