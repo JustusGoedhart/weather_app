@@ -51,6 +51,7 @@ def login_form():
         if submitted:
             if login(username, password):
                 st.success("Logged in successfully!")
+                st.experimental_rerun()  # Rerun the app to update session state
                 return True
             else:
                 st.error("Username or password is incorrect")
@@ -260,4 +261,5 @@ def app():
         # If not logged in, show the login form
         login_form()
 
-app()  # Call the app function to run the app
+# Call the app function to run the app
+app()
