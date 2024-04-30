@@ -1,4 +1,3 @@
-#%%
 import streamlit as st
 import bcrypt
 import requests
@@ -8,11 +7,31 @@ from io import StringIO
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import pytz
-import uuid
+import os
+from dotenv import load_dotenv
+import schedule
+import time
 
-# Load sensitive data from Streamlit Secrets
-user1_username = st.secrets["USER1_USERNAME"]
-user2_username = st.secrets["USER2_USERNAME"]
+# Function to hash passwords using bcrypt
+def hash_password(password):
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode(), salt)
+    return hashed_password
+
+load_dotenv()
+
+# Load sensitive data from environment variables
+user1_username = os.getenv("USER1_USERNAME")
+user1_password = os.getenv("USER1_PASSWORD")
+user2_username = os.getenv("USER2_USERNAME")
+user2_password = os.getenv("USER2_PASSWORD")
+
+# Dummy database of users with hashed passwords
+users = {}
+if user1_username and user1_password:
+    users[user1_username] = hash_password(user1_password)
+if user2_username and user2_password:
+    users[user2_username] = hash_password(user2_password)
 
 # Function to logout user
 def logout():
@@ -21,37 +40,27 @@ def logout():
 
 # Function to authenticate user
 def authenticate(username, password):
-    # Check against user 1
-    if username == user1_username:
-        stored_hash = st.secrets["USER1_PASSWORD_HASHED"]
-    # Check against user 2
-    elif username == user2_username:
-        stored_hash = st.secrets["USER2_PASSWORD_HASHED"]
-    else:
-        return False
-
-    # Convert the stored hash from string to bytes for bcrypt
-    stored_hash = stored_hash.encode().decode('unicode_escape').encode('raw_unicode_escape')
-    return bcrypt.checkpw(password.encode(), stored_hash)
+    if username in users and bcrypt.checkpw(password.encode(), users[username]):
+        return True
+    return False
 
 # Function to login user
 def login(username, password):
     if authenticate(username, password):
         st.session_state['username'] = username  # Set the session state here
-        return True
-    return False
+        return username
+    return None
 
 # Function to display login form
 def login_form():
-    form_key = f"login_form_{uuid.uuid4().hex}"  # Generate a unique key for the form
-    with st.form(form_key):
+    with st.form("login_form"):
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
         submitted = st.form_submit_button("Login")
         if submitted:
             if login(username, password):
                 st.success("Logged in successfully!")
-                st.experimental_rerun()  # Rerun the app to update session state
+                st.rerun()
                 return True
             else:
                 st.error("Username or password is incorrect")
@@ -60,10 +69,6 @@ def login_form():
 # Initialize session state for username
 if 'username' not in st.session_state:
     st.session_state['username'] = None
-
-# Display the login form if no user is logged in
-if not st.session_state['username']:
-    login_form()
 
 if 'city' not in st.session_state:
     st.session_state['city'] = "Cambridge, UK"  # Default city
