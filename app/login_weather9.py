@@ -21,6 +21,9 @@ def hash_password(password):
 
 load_dotenv()
 
+# Load secrets from streamlit.toml
+st.secrets.load_config_file()
+
 # Load sensitive data from Streamlit Secrets
 user1_username = st.secrets["USER1_USERNAME"]
 user1_password = st.secrets["USER1_PASSWORD"]
