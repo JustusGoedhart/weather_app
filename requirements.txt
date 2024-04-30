@@ -15,7 +15,7 @@ cytoolz
 daal4py
 datashape==0.5.2
 datetime
-dotenv
+python-dotenv
 et-xmlfile==1.1.0
 fonttools==4.25.0
 gitdb==4.0.11
