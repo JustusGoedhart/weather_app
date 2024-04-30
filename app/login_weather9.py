@@ -1,3 +1,4 @@
+#%%
 import streamlit as st
 import bcrypt
 import requests
@@ -7,10 +8,6 @@ from io import StringIO
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import pytz
-import os
-from dotenv import load_dotenv
-import schedule
-import time
 
 # Function to hash passwords using bcrypt
 def hash_password(password):
@@ -18,13 +15,11 @@ def hash_password(password):
     hashed_password = bcrypt.hashpw(password.encode(), salt)
     return hashed_password
 
-load_dotenv()
-
-# Load sensitive data from environment variables
-user1_username = os.getenv("USER1_USERNAME")
-user1_password = os.getenv("USER1_PASSWORD")
-user2_username = os.getenv("USER2_USERNAME")
-user2_password = os.getenv("USER2_PASSWORD")
+# Load sensitive data from Streamlit Secrets
+user1_username = st.secrets["USER1_USERNAME"]
+user1_password = st.secrets["USER1_PASSWORD"]
+user2_username = st.secrets["USER2_USERNAME"]
+user2_password = st.secrets["USER2_PASSWORD"]
 
 # Dummy database of users with hashed passwords
 users = {}
@@ -69,7 +64,6 @@ def login_form():
 # Initialize session state for username
 if 'username' not in st.session_state:
     st.session_state['username'] = None
-
 if 'city' not in st.session_state:
     st.session_state['city'] = "Cambridge, UK"  # Default city
 
@@ -230,6 +224,8 @@ def main_page():
         table_data = table_data.fillna("Nighttime")
         st.table(table_data.T) # T to transpose the table
 
+
+
         # Display the radio button group for selecting chart type
         chart_type = st.radio("Select chart type:", ["Temperature (°C)", "Precipitation (mm)"])
         
@@ -266,5 +262,4 @@ def app():
         # If not logged in, show the login form
         login_form()
 
-# Call the app function to run the app
-app()
+app()  # Call the app function to run the app
